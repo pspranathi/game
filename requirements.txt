@@ -1,1 +1,21 @@
-streamlit
+import streamlit as st
+import random
+
+st.title("Balloon Number Game 🎈")
+
+st.write("Press the number button to burst the balloon!")
+
+# Generate balloons with random numbers
+balloons = list(range(1, 6))  # Balloons numbered 1–5
+random.shuffle(balloons)
+
+# Session state to track burst balloons
+if "burst" not in st.session_state:
+    st.session_state.burst = []
+
+# Display balloons
+for num in balloons:
+    if num not in st.session_state.burst:
+        if st.button(f"Balloon {num} 🎈"):
+            st.session_state.burst.append(num)
+            st.success(f"POP! Balloon {num} burst 💥")
