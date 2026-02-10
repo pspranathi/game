@@ -1,68 +1,21 @@
-import pygame
+import streamlit as st
 import random
-import sys
 
-# Initialize pygame
-pygame.init()
+st.title("Balloon Number Game 🎈")
 
-# Screen setup
-WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Balloon Number Game")
+st.write("Press the number button to burst the balloon!")
 
-# Colors
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
+# Generate balloons with random numbers
+balloons = list(range(1, 6))  # Balloons numbered 1–5
+random.shuffle(balloons)
 
-# Font
-font = pygame.font.Font(None, 74)
+# Session state to track burst balloons
+if "burst" not in st.session_state:
+    st.session_state.burst = []
 
-# Balloon class
-class Balloon:
-    def __init__(self, number):
-        self.number = number
-        self.x = random.randint(50, WIDTH - 50)
-        self.y = HEIGHT
-        self.speed = random.randint(2, 5)
-        self.radius = 40
-        self.burst = False
-
-    def move(self):
-        if not self.burst:
-            self.y -= self.speed
-
-    def draw(self, screen):
-        if not self.burst:
-            pygame.draw.circle(screen, RED, (self.x, self.y), self.radius)
-            text = font.render(str(self.number), True, WHITE)
-            text_rect = text.get_rect(center=(self.x, self.y))
-            screen.blit(text, text_rect)
-
-# Create balloons
-balloons = [Balloon(i) for i in range(1, 6)]  # Balloons numbered 1–5
-
-# Game loop
-clock = pygame.time.Clock()
-running = True
-while running:
-    screen.fill(WHITE)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            key_pressed = event.unicode
-            if key_pressed.isdigit():
-                for balloon in balloons:
-                    if str(balloon.number) == key_pressed:
-                        balloon.burst = True
-
-    for balloon in balloons:
-        balloon.move()
-        balloon.draw(screen)
-
-    pygame.display.flip()
-    clock.tick(30)
-
-pygame.quit()
-sys.exit()
+# Display balloons
+for num in balloons:
+    if num not in st.session_state.burst:
+        if st.button(f"Balloon {num} 🎈"):
+            st.session_state.burst.append(num)
+            st.success(f"POP! Balloon {num} burst 💥")
